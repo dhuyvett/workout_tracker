@@ -136,13 +136,13 @@ This tasks list follows a bottom-up implementation approach:
 **Complexity:** Small
 **Estimated Time:** 1 hour
 
-- [ ] 3.0 Implement heart rate zone calculation logic
-  - [ ] 3.1 Write 2-8 focused tests for zone calculation
+- [x] 3.0 Implement heart rate zone calculation logic
+  - [x] 3.1 Write 2-8 focused tests for zone calculation
     - Limit to 2-8 highly focused tests maximum
     - Test only critical calculations: max HR calculation, zone boundaries, color assignment
     - Skip exhaustive testing of all ages and BPM values
     - Create test/utils/heart_rate_zone_calculator_test.dart
-  - [ ] 3.2 Create heart rate zone calculator
+  - [x] 3.2 Create heart rate zone calculator
     - Create lib/utils/heart_rate_zone_calculator.dart
     - Implement calculateMaxHeartRate(age): return 220 - age
     - Implement getZoneForBpm(bpm, age): return HeartRateZone enum
@@ -155,7 +155,7 @@ This tasks list follows a bottom-up implementation approach:
     - Implement getColorForZone(zone): return Color from theme
     - Implement getZoneRanges(age): return Map<HeartRateZone, (int, int)> with BPM ranges
     - Implement getZoneLabel(zone): return user-friendly string
-  - [ ] 3.3 Ensure zone calculation tests pass
+  - [x] 3.3 Ensure zone calculation tests pass
     - Run ONLY the 2-8 tests written in 3.1
     - Verify calculations match Hopkins Medicine methodology
     - Verify correct zone assignment for edge cases (boundary values)
