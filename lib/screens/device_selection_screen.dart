@@ -63,8 +63,16 @@ class _DeviceSelectionScreenState extends ConsumerState<DeviceSelectionScreen> {
     try {
       final bluetoothService = BluetoothService.instance;
 
+      // Debug logging
+      // ignore: avoid_print
+      print('Attempting to connect to device: ${device.id} (${device.name})');
+
       // Connect to device (works for both demo and real devices)
       await bluetoothService.connectToDevice(device.id);
+
+      // Debug logging
+      // ignore: avoid_print
+      print('Successfully connected to device: ${device.name}');
 
       // Navigate to monitoring screen on successful connection
       if (mounted) {
@@ -76,6 +84,10 @@ class _DeviceSelectionScreenState extends ConsumerState<DeviceSelectionScreen> {
         );
       }
     } catch (e) {
+      // Debug logging
+      // ignore: avoid_print
+      print('Error connecting to device: $e');
+
       if (mounted) {
         setState(() {
           _errorMessage = getUserFriendlyErrorMessage(
@@ -315,6 +327,9 @@ class _BluetoothErrorState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isBluetoothOffError =
+        errorMessage.toLowerCase().contains('powered off') ||
+        errorMessage.toLowerCase().contains('off');
 
     return Center(
       child: Padding(
@@ -333,6 +348,16 @@ class _BluetoothErrorState extends StatelessWidget {
               style: theme.textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
+            if (isBluetoothOffError) ...[
+              const SizedBox(height: 12),
+              Text(
+                'Try enabling Bluetooth in your system settings.',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
             const SizedBox(height: 24),
             FilledButton.icon(
               onPressed: onRetry,
