@@ -1,30 +1,65 @@
-// This is a basic Flutter widget test.
+// This file contains basic smoke tests for the workout tracker app.
 //
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// The original counter app smoke test was removed since the app has been
+// completely restructured for heart rate monitoring functionality.
+// See the test/screens/ and test/integration/ directories for comprehensive
+// widget and integration tests.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:workout_tracker/main.dart';
+import 'package:workout_tracker/models/scanned_device.dart';
+import 'package:workout_tracker/models/heart_rate_zone.dart';
+import 'package:workout_tracker/utils/heart_rate_zone_calculator.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  group('App Smoke Tests', () {
+    test('ScannedDevice.demoMode() creates correct demo device', () {
+      final demoDevice = ScannedDevice.demoMode();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+      expect(demoDevice.isDemo, isTrue);
+      expect(demoDevice.name, equals('Demo Mode'));
+      expect(demoDevice.id, equals('DEMO_MODE_DEVICE'));
+    });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    test('HeartRateZoneCalculator calculates max heart rate correctly', () {
+      // 220 - age formula
+      expect(HeartRateZoneCalculator.calculateMaxHeartRate(30), equals(190));
+      expect(HeartRateZoneCalculator.calculateMaxHeartRate(40), equals(180));
+      expect(HeartRateZoneCalculator.calculateMaxHeartRate(50), equals(170));
+    });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    test('HeartRateZoneCalculator returns correct zones', () {
+      // For age 30 (max HR = 190):
+      // - Resting: < 95 BPM (< 50%)
+      // - Zone 1: 95-113 BPM (50-60%)
+      // - Zone 2: 114-132 BPM (60-70%)
+      // - Zone 3: 133-151 BPM (70-80%)
+      // - Zone 4: 152-170 BPM (80-90%)
+      // - Zone 5: 171+ BPM (90%+)
+
+      expect(
+        HeartRateZoneCalculator.getZoneForBpm(80, 30),
+        equals(HeartRateZone.resting),
+      );
+      expect(
+        HeartRateZoneCalculator.getZoneForBpm(100, 30),
+        equals(HeartRateZone.zone1),
+      );
+      expect(
+        HeartRateZoneCalculator.getZoneForBpm(120, 30),
+        equals(HeartRateZone.zone2),
+      );
+      expect(
+        HeartRateZoneCalculator.getZoneForBpm(140, 30),
+        equals(HeartRateZone.zone3),
+      );
+      expect(
+        HeartRateZoneCalculator.getZoneForBpm(160, 30),
+        equals(HeartRateZone.zone4),
+      );
+      expect(
+        HeartRateZoneCalculator.getZoneForBpm(180, 30),
+        equals(HeartRateZone.zone5),
+      );
+    });
   });
 }

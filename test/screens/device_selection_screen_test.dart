@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:workout_tracker/models/scanned_device.dart';
 import 'package:workout_tracker/providers/device_scan_provider.dart';
 import 'package:workout_tracker/screens/device_selection_screen.dart';
+import 'package:workout_tracker/utils/error_messages.dart';
 
 void main() {
   group('DeviceSelectionScreen', () {
@@ -30,8 +31,8 @@ void main() {
         ),
       );
 
-      // Wait for the stream to emit
-      await tester.pumpAndSettle();
+      // Use pump with duration instead of pumpAndSettle
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Verify demo mode device is displayed first
       expect(find.text('Demo Mode'), findsOneWidget);
@@ -56,19 +57,14 @@ void main() {
         ),
       );
 
-      await tester.pumpAndSettle();
+      // Use pump with duration instead of pumpAndSettle
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Should show demo mode
       expect(find.text('Demo Mode'), findsOneWidget);
 
-      // Should show message about no real devices
-      expect(
-        find.text(
-          'No heart rate monitors found. Make sure your device is '
-          'turned on and in range.',
-        ),
-        findsOneWidget,
-      );
+      // Should show message about no real devices (use exact constant)
+      expect(find.text(errorNoDevicesFound), findsOneWidget);
     });
 
     testWidgets('displays scan for devices button', (
@@ -85,7 +81,8 @@ void main() {
         ),
       );
 
-      await tester.pumpAndSettle();
+      // Use pump with duration instead of pumpAndSettle
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Verify the scan button is present
       expect(find.text('Scan for Devices'), findsOneWidget);
